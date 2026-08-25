@@ -7,6 +7,9 @@ using ToDoApplication.Model.Enums;
 
 namespace ToDoApplication.Model
 {
+    /// <summary>
+    /// Model for To-Do
+    /// </summary>
     public class Tasks
     {
         public Tasks(string taskHeading, string description, DateTime targetDate, bool isCompleted, TaskRecurrance taskRecurranceType, Guid userId)

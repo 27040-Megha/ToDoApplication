@@ -14,6 +14,10 @@ namespace ToDoApplication.Repository
     /// </summary>
     public class TaskRepo
     {
+        /// <summary>
+        /// Add tasks to repo
+        /// </summary>
+        /// <param name="toDoTasks"></param>
         public void AddToDoTasks(List<Tasks> toDoTasks)
         {
             foreach (var tasks in toDoTasks)
@@ -24,12 +28,20 @@ namespace ToDoApplication.Repository
             }
         }
         
+        /// <summary>
+        /// Fetch and returns all tasks from Repo
+        /// </summary>
+        /// <returns></returns>
         public List<Tasks> ReturnAllToDoTasks()
         {
             var listOfTasks = FileRepoService.ReadFile<Tasks>(FilePath.TaskFile);
             return listOfTasks.Where(task => task.UserId == CurrentUserSession.CurrentUserId).ToList();
         }
 
+        /// <summary>
+        /// Removes a daily task from Repo
+        /// </summary>
+        /// <param name="index"></param>
         public void RemoveDailyTask(int index)
         {
             var listOfTasks = FileRepoService.ReadFile<Tasks>(FilePath.TaskFile).Where(task => task.UserId == CurrentUserSession.CurrentUserId).ToList();
@@ -37,6 +49,11 @@ namespace ToDoApplication.Repository
             FileRepoService.WriteFile(listOfTasks, FilePath.TaskFile);
         }
 
+        /// <summary>
+        /// Modify Daily Task in Repo
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="tasksToUpdate"></param>
         public void ModifyDailyTask(int index, List<Tasks> tasksToUpdate)
         {
             var listOfTasks = FileRepoService.ReadFile<Tasks>(FilePath.TaskFile).Where(task => task.UserId == CurrentUserSession.CurrentUserId).ToList();
@@ -53,6 +70,10 @@ namespace ToDoApplication.Repository
             FileRepoService.WriteFile(listOfTasks, FilePath.TaskFile);
         }
 
+        /// <summary>
+        /// Mark the task as complete in repo
+        /// </summary>
+        /// <param name="index"></param>
         public void MarkAsComplete(int index)
         {
             var listOfTasks = FileRepoService.ReadFile<Tasks>(FilePath.TaskFile).Where(task => task.UserId == CurrentUserSession.CurrentUserId).ToList();

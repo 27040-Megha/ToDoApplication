@@ -9,8 +9,15 @@ using ToDoApplication.View;
 
 namespace ToDoApplication
 {
+    /// <summary>
+    /// Entry Point of Application
+    /// </summary>
     public class Program
     {
+        /// <summary>
+        /// Main Method
+        /// </summary>
+        /// <param name="args"></param>
         public static void Main(string[] args)
         {
             try

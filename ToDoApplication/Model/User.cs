@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace ToDoApplication.Model
 {
+    /// <summary>
+    /// Model for User
+    /// </summary>
     public class User
     {
         public User(Guid userId, string employeeId, string userName, string password)

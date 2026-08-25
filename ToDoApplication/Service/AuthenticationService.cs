@@ -19,6 +19,12 @@ namespace ToDoApplication.Service
             this._userService = userService;
         }
 
+        /// <summary>
+        /// Login Method
+        /// </summary>
+        /// <param name="employeeId"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
         public Result Login(string employeeId, string password)
         {
             var userList = this._userService.GetAllUsers();

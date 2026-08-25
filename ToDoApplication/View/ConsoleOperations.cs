@@ -21,6 +21,12 @@ namespace ToDoApplication.View
 
         private readonly AuthenticationService _authService;
 
+        /// <summary>
+        /// Constructor Injection - Injecting Services
+        /// </summary>
+        /// <param name="taskService"></param>
+        /// <param name="userService"></param>
+        /// <param name="authService"></param>
         public ConsoleOperations(TaskService taskService, UserService userService, AuthenticationService authService)
         {
             this._taskService = taskService;
@@ -28,6 +34,9 @@ namespace ToDoApplication.View
             this._authService = authService;
         }
 
+        /// <summary>
+        /// Starts dashboard with SignUp, Login and Exit
+        /// </summary>
         public void Start()
         {
             int choice;
@@ -115,9 +124,8 @@ namespace ToDoApplication.View
             var loginResult = this._authService.Login(empID, password);
             if (loginResult.IsSuccess)
             {
-                var user = this._userService.GetAllUsers().FirstOrDefault(u => u.UserId.Equals(CurrentUserSession.CurrentUserId));
                 Console.Clear();
-                Console.WriteLine($"Welcome User {user.UserName}");
+                this.DisplayUserName();
                 this.Run();
             }
             else
@@ -126,8 +134,16 @@ namespace ToDoApplication.View
             }
         }
 
-        private void Run()
+        private void DisplayUserName()
         {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            var user = this._userService.GetAllUsers().FirstOrDefault(u => u.UserId.Equals(CurrentUserSession.CurrentUserId));
+            Console.WriteLine($"Welcome User {user.UserName}");
+        }
+
+        private void DisplayRecentTwoTasks()
+        {
+
             var recentTasks = this._taskService.FetchRecentTwoTasks();
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine("Recent two tasks: ");
@@ -149,7 +165,10 @@ namespace ToDoApplication.View
                 }
             }
             Console.ResetColor();
-
+        }
+        private void Run()
+        {
+            this.DisplayRecentTwoTasks();
             MenuOptions choice;
             do
             {

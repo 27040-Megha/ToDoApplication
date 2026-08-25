@@ -15,11 +15,20 @@ namespace ToDoApplication.Service
     {
         private readonly UserRepo _userRepo;
 
+        /// <summary>
+        /// Constructor for User Service
+        /// </summary>
+        /// <param name="userRepo"></param>
         public UserService(UserRepo userRepo)
         {
             this._userRepo = userRepo;
         }
 
+        /// <summary>
+        /// Business Logic to create only unique user
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         public bool Adduser(User user)
         {
             var listOfUsers = this._userRepo.FetchAllUsers().Where(employee => employee.EmployeeId == user.EmployeeId).ToList();
@@ -32,6 +41,10 @@ namespace ToDoApplication.Service
             return true;
         }
 
+        /// <summary>
+        /// Fetch all users from userRepo
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<User> GetAllUsers()
         {
             return this._userRepo.FetchAllUsers();
