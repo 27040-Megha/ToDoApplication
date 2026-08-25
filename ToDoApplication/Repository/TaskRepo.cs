@@ -32,5 +32,21 @@ namespace ToDoApplication.Repository
             listOfTasks.RemoveAt(index);
             FileRepoService.WriteFile(listOfTasks, FilePath.TaskFile);
         }
+
+        public void ModifyDailyTask(int index, List<Tasks> tasksToUpdate)
+        {
+            var listOfTasks = FileRepoService.ReadFile<Tasks>(FilePath.TaskFile);
+            var oldTask = listOfTasks[index];
+            var newTask = tasksToUpdate[0];
+            oldTask.TaskHeading = newTask.TaskHeading;
+            oldTask.Description = newTask.Description;
+            oldTask.TargetDate = newTask.TargetDate;
+            oldTask.TaskRecurranceType = newTask.TaskRecurranceType;
+            for (int i = 1; i < tasksToUpdate.Count; i++)
+            {
+                listOfTasks.Add(tasksToUpdate[i]);
+            }
+            FileRepoService.WriteFile(listOfTasks, FilePath.TaskFile);
+        }
     }
 }

@@ -177,7 +177,31 @@ namespace ToDoApplication.View
 
         private void EditTask()
         {
-            throw new NotImplementedException();
+            if (this._taskService.FetchaAllToDoTasks().Count == 0)
+            {
+                Console.WriteLine("No Daily Tasks to update right now!");
+            }
+
+            Console.WriteLine("Enter an index to update a daily task: ");
+            int index = this.GetValidIndex();
+            if (index == -1)
+            {
+                return;
+            }
+
+            var taskToUpdate = this.GetTaskDetails();
+            if (taskToUpdate is null)
+            {
+                return;
+            }
+
+            if (!this._taskService.UpdateDailyTask(index, taskToUpdate))
+            {
+                Console.WriteLine("No Daily Tasks found with that index, Index out of range!");
+                return;
+            }
+
+            Console.WriteLine("Daily Tasks Updated Successfully!");
         }
 
         private void ViewToDoTasks()

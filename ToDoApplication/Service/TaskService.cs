@@ -37,5 +37,17 @@ namespace ToDoApplication.Service
             this._taskRepo.RemoveDailyTask(index);
             return true;
         }
+
+        public bool UpdateDailyTask(int index, List<Tasks> tasksToUpdate)
+        {
+            if (index >= this.FetchaAllToDoTasks().Count)
+            {
+                return false;
+            }
+
+
+            this._taskRepo.ModifyDailyTask(index, tasksToUpdate);
+            return true;
+        }
     }
 }
