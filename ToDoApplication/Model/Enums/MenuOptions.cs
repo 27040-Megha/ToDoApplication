@@ -18,8 +18,6 @@ namespace ToDoApplication.Model.Enums
 
         ViewToDo,
 
-        ViewSpecificTask,
-
         Exit,
 
         Invalid = 0,

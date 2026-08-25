@@ -48,5 +48,12 @@ namespace ToDoApplication.Repository
             }
             FileRepoService.WriteFile(listOfTasks, FilePath.TaskFile);
         }
+
+        public void MarkAsComplete(int index)
+        {
+            var listOfTasks = FileRepoService.ReadFile<Tasks>(FilePath.TaskFile);
+            listOfTasks[index].IsCompleted = true;
+            FileRepoService.WriteFile(listOfTasks, FilePath.TaskFile);
+        }
     }
 }

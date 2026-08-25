@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 using ToDoApplication.Helper;
 using ToDoApplication.Model;
 using ToDoApplication.Model.Enums;
@@ -18,6 +21,28 @@ namespace ToDoApplication.View
 
         public void Run()
         {
+            var recentTasks = this._taskService.FetchRecentTwoTasks();
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine("Recent two tasks: ");
+            if (recentTasks.Count == 0)
+            {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("No DailyTask for you to complete");
+            }
+            else
+            {
+                foreach (var task in recentTasks)
+                {
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine($"Task Heading: {task.TaskHeading}");
+                    Console.WriteLine("Task Description: " + task.Description);
+                    Console.WriteLine("Target Date: " + task.TargetDate);
+                    Console.WriteLine("Task Recurrance: " + task.TaskRecurranceType);
+                    Console.WriteLine("----------------------------------------------------------------------------------------");
+                }
+            }
+            Console.ResetColor();
+
             MenuOptions choice;
             do
             {
@@ -40,11 +65,11 @@ namespace ToDoApplication.View
                     case MenuOptions.EditTask:
                         this.EditTask();
                         break;
+                    case MenuOptions.MarkTaskAsComplete:
+                        this.MarkTaskAsComplete();
+                        break;
                     case MenuOptions.ViewToDo:
                         this.ViewToDoTasks();
-                        break;
-                    case MenuOptions.ViewSpecificTask:
-                        this.ViewSpecificTask();
                         break;
                     case MenuOptions.Exit:
                         Console.WriteLine("Exiting Application..Bye!");
@@ -55,6 +80,28 @@ namespace ToDoApplication.View
                 }
             }
             while (choice != MenuOptions.Exit);
+        }
+
+        private void MarkTaskAsComplete()
+        {
+            if (this._taskService.FetchaAllToDoTasks().Count == 0)
+            {
+                Console.WriteLine("No Daily Tasks to mark as complete right now!");
+            }
+
+            Console.WriteLine("Enter an index to update a daily task: ");
+            int index = this.GetValidIndex();
+            if (index == -1)
+            {
+                return;
+            }
+
+            if (!this._taskService.MarkAsComplete(index))
+            {
+                Console.WriteLine("Index out of range");
+            }
+
+            Console.WriteLine("Marked as Done Successfully!");
         }
 
         private void AddTask()
@@ -220,11 +267,6 @@ namespace ToDoApplication.View
             }
         }
 
-        private void ViewSpecificTask()
-        {
-            throw new NotImplementedException();
-        }
-
         private void DisplayMenu()
         {
             Console.WriteLine("Welcome to To-Do application");
@@ -232,9 +274,8 @@ namespace ToDoApplication.View
             Console.WriteLine("2. Delete To-Do Daily tasks");
             Console.WriteLine("3. Edit To-Do Daily tasks");
             Console.WriteLine("4. Mark To-Do Daily tasks as Complete");
-            Console.WriteLine("5. View To-Do Daily Tasks");
-            Console.WriteLine("6. View Specific Daily Tasks");
-            Console.WriteLine("7. Exit");
+            Console.WriteLine("5. View All To-Do Daily Tasks");
+            Console.WriteLine("6. Exit");
             Console.WriteLine("Enter your choice (1-7): ");
         }
     }

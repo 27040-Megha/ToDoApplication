@@ -49,5 +49,23 @@ namespace ToDoApplication.Service
             this._taskRepo.ModifyDailyTask(index, tasksToUpdate);
             return true;
         }
+
+        public bool MarkAsComplete(int index)
+        {
+            if (index >= this.FetchaAllToDoTasks().Count)
+            {
+                return false;
+            }
+
+            this._taskRepo.MarkAsComplete(index);
+            return true;
+        }
+
+        public List<Tasks> FetchRecentTwoTasks()
+        {
+            var listOfAllTasks = this.FetchaAllToDoTasks().Where(tasks => !tasks.IsCompleted);
+            var recentTasks = listOfAllTasks.OrderBy(tasks => tasks.TargetDate).Take(2).ToList();
+            return recentTasks;
+        }
     }
 }
