@@ -141,8 +141,39 @@ namespace ToDoApplication.View
 
         private void DeleteTask()
         {
-            throw new NotImplementedException();
+            if (this._taskService.FetchaAllToDoTasks().Count == 0)
+            {
+                Console.WriteLine("No Daily Tasks to delete right now!");
+            }
+
+            Console.WriteLine("Enter an index to delete a daily task: ");
+            int index = this.GetValidIndex();
+            if (index == -1)
+            {
+                return;
+            }
+
+            if (!this._taskService.DeleteDailyTask(index))
+            {
+                Console.WriteLine("No Daily Tasks found with that index, Index out of range!");
+                return;
+            }
+
+            Console.WriteLine("Daily Tasks Deleted Successfully!");
         }
+
+        private int GetValidIndex()
+        {
+            var isValidIndex = int.TryParse(Console.ReadLine(), out int index);
+            if (!isValidIndex || index < 1)
+            {
+                Console.WriteLine("Enter valid index greater than 1");
+                return -1;
+            }
+
+            return index - 1;
+        }
+
 
         private void EditTask()
         {
@@ -153,13 +184,15 @@ namespace ToDoApplication.View
         {
             var toDoTasks = this._taskService.FetchaAllToDoTasks();
             Console.WriteLine("Your To-Do tasks: ");
+            int index = 1;
             foreach(var task in toDoTasks)
             {
-                Console.WriteLine("Task Heading: " + task.TaskHeading);
+                Console.WriteLine($"{index++}. Task Heading: {task.TaskHeading}");
                 Console.WriteLine("Task Description: " + task.Description);
                 Console.WriteLine("Target Date: " + task.TargetDate);
                 Console.WriteLine("Task Recurrance: " + task.TaskRecurranceType);
                 Console.WriteLine("Completed Task: " + task.IsCompleted);
+                Console.WriteLine("----------------------------------------------------------------------------------------");
             }
         }
 

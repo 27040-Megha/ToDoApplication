@@ -25,5 +25,12 @@ namespace ToDoApplication.Repository
             var listOfTasks = FileRepoService.ReadFile<Tasks>(FilePath.TaskFile);
             return listOfTasks;
         }
+
+        public void RemoveDailyTask(int index)
+        {
+            var listOfTasks = FileRepoService.ReadFile<Tasks>(FilePath.TaskFile);
+            listOfTasks.RemoveAt(index);
+            FileRepoService.WriteFile(listOfTasks, FilePath.TaskFile);
+        }
     }
 }

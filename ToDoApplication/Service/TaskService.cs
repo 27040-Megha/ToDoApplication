@@ -26,5 +26,16 @@ namespace ToDoApplication.Service
         {
             return this._taskRepo.ReturnAllToDoTasks();
         }
+
+        public bool DeleteDailyTask(int index)
+        {
+            if (index >= this.FetchaAllToDoTasks().Count)
+            {
+                return false;
+            }
+
+            this._taskRepo.RemoveDailyTask(index);
+            return true;
+        }
     }
 }
