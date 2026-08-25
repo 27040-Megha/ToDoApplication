@@ -197,6 +197,9 @@ namespace ToDoApplication.View
                     case MenuOptions.ViewToDo:
                         this.ViewToDoTasks();
                         break;
+                    case MenuOptions.ViewCalendar:
+                        this.ViewCalendar();
+                        break;
                     case MenuOptions.Logout:
                         Console.WriteLine("Logging Out from the Application..Bye!");
                         CurrentUserSession.CurrentUserId = Guid.Empty;
@@ -207,6 +210,18 @@ namespace ToDoApplication.View
                 }
             }
             while (choice != MenuOptions.Logout);
+        }
+
+        private void ViewCalendar()
+        {
+            var calendarwiseSortedDailyTask = this._taskService.CalendarWiseSortedDailyTask();
+            Console.WriteLine("CALENDAR WISE SORTED DAILY TASKS");
+            foreach (var tasks in calendarwiseSortedDailyTask)
+            {
+                Console.WriteLine($"Target Date: {tasks.TargetDate}");
+                Console.WriteLine($"Task Heading: {tasks.TaskHeading} | Task Description : {tasks.Description} | Task Recurrence : {tasks.TaskRecurranceType}");
+                Console.WriteLine("-----------------------------------------------------------------------------------------------------------------------------------");
+            }
         }
 
         private void MarkTaskAsComplete()
@@ -262,7 +277,7 @@ namespace ToDoApplication.View
                 return null;
             }
 
-            Console.WriteLine("Enter Target Date: ");
+            Console.WriteLine("Enter Final Target Date: ");
             bool isValidDate = DateTime.TryParse(Console.ReadLine(), out DateTime targetDate);
             if (!isValidDate)
             {
@@ -401,7 +416,8 @@ namespace ToDoApplication.View
             Console.WriteLine("3. Edit To-Do Daily tasks");
             Console.WriteLine("4. Mark To-Do Daily tasks as Complete");
             Console.WriteLine("5. View All To-Do Daily Tasks");
-            Console.WriteLine("6. Logout");
+            Console.WriteLine("6. View Daily Tasks in Calendar");
+            Console.WriteLine("7. Logout");
             Console.WriteLine("Enter your choice (1-7): ");
         }
     }

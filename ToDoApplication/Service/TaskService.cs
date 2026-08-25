@@ -98,5 +98,11 @@ namespace ToDoApplication.Service
             var recentTasks = listOfAllTasks.OrderBy(tasks => tasks.TargetDate).Take(2).ToList();
             return recentTasks;
         }
+
+        public List<Tasks> CalendarWiseSortedDailyTask()
+        {
+            var listOfAllTasks = this.FetchaAllToDoTasks().OrderBy(tasks => tasks.TargetDate);
+            return listOfAllTasks.ToList();
+        }
     }
 }

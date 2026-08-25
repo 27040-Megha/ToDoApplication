@@ -21,6 +21,8 @@ namespace ToDoApplication.Model.Enums
 
         ViewToDo,
 
+        ViewCalendar,
+
         Logout,
 
         Invalid = 0,
