@@ -77,6 +77,7 @@
     <Compile Include="Helper\InputValidation.cs" />
     <Compile Include="Model\Enums\MenuOptions.cs" />
     <Compile Include="Model\Enums\TaskRecurrance.cs" />
+    <Compile Include="Model\Result.cs" />
     <Compile Include="Model\Tasks.cs" />
     <Compile Include="Model\User.cs" />
     <Compile Include="Program.cs" />
@@ -88,7 +89,11 @@
     </Compile>
     <Compile Include="Repository\FileRepoService.cs" />
     <Compile Include="Repository\TaskRepo.cs" />
+    <Compile Include="Repository\UserRepo.cs" />
+    <Compile Include="Service\AuthenticationService.cs" />
+    <Compile Include="Service\CurrentUserSession.cs" />
     <Compile Include="Service\TaskService.cs" />
+    <Compile Include="Service\UserService.cs" />
     <Compile Include="View\ConsoleOperations.cs" />
   </ItemGroup>
   <ItemGroup>

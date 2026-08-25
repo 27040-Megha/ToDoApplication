@@ -14,13 +14,117 @@ namespace ToDoApplication.View
     {
         private readonly TaskService _taskService;
 
-        public ConsoleOperations(TaskService taskService)
+        private readonly UserService _userService;
+
+        private readonly AuthenticationService _authService;
+
+        public ConsoleOperations(TaskService taskService, UserService userService, AuthenticationService authService)
         {
             this._taskService = taskService;
+            this._userService = userService;
+            this._authService = authService;
         }
 
-        public void Run()
+        public void Start()
         {
+            int choice;
+            do
+            {
+                Console.WriteLine("Welcome to the Application!");
+                Console.WriteLine("1. Signup");
+                Console.WriteLine("2. Login");
+                Console.WriteLine("3. Exit");
+                bool isValidChoice = int.TryParse(Console.ReadLine(), out choice);
+                if (!isValidChoice)
+                {
+                    choice = 0;
+                }
+
+                switch(choice)
+                {
+                    case 1:
+                        this.SignupUser();
+                        break;
+                    case 2:
+                        this.LoginUser();
+                        break;
+                    case 3:
+                        Console.WriteLine("Exiting the App Bye!");
+                        break;
+                }
+            }
+            while (choice != 3);
+        }
+
+        private void SignupUser()
+        {
+            Console.WriteLine("Enter Employee ID: ");
+            string empID = Console.ReadLine();
+            if (!InputValidation.ValidateEmployeeNumber(empID))
+            {
+                Console.WriteLine("Employee Number should be of the format EMP001");
+                return;
+            }
+
+            Console.WriteLine("Enter User Name: ");
+            string userName = Console.ReadLine();
+            if (!InputValidation.ValidateString(userName))
+            {
+                Console.WriteLine("String should not be null or empty");
+                return;
+            }
+
+            Console.WriteLine("Enter Password: ");
+            string password = Console.ReadLine();
+            if (!InputValidation.ValidatePassword(password))
+            {
+                Console.WriteLine("Password should be of length 8 exactly");
+                return;
+            }
+
+            bool isSuccess = this._userService.Adduser(new User(Guid.NewGuid(), empID, userName, password));
+
+            //if (!this._userService.Adduser(new User(Guid.NewGuid(), empID, userName, password)))
+            //{
+            //    Console.WriteLine("User with same Employee ID already exists!");
+            //    return;
+            //}
+            Console.WriteLine("Signup successful!");
+        }
+
+
+        private void LoginUser()
+        {
+            Console.WriteLine("Enter Employee ID: ");
+            string empID = Console.ReadLine();
+            if (!InputValidation.ValidateEmployeeNumber(empID))
+            {
+                Console.WriteLine("Employee Number should be of the format EMP001");
+                return;
+            }
+
+            Console.WriteLine("Enter Password: ");
+            string password = Console.ReadLine();
+            if (!InputValidation.ValidatePassword(password))
+            {
+                Console.WriteLine("Password should be of length 8 exactly");
+                return;
+            }
+
+            var loginResult = this._authService.Login(empID, password);
+            if (loginResult.IsSuccess)
+            {
+                this.Run();
+            }
+            else
+            {
+                Console.WriteLine(loginResult.Message);
+            }
+        }
+
+        private void Run()
+        {
+            Console.Clear();
             var recentTasks = this._taskService.FetchRecentTwoTasks();
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine("Recent two tasks: ");
@@ -71,15 +175,16 @@ namespace ToDoApplication.View
                     case MenuOptions.ViewToDo:
                         this.ViewToDoTasks();
                         break;
-                    case MenuOptions.Exit:
-                        Console.WriteLine("Exiting Application..Bye!");
+                    case MenuOptions.Logout:
+                        Console.WriteLine("Logging Out from the Application..Bye!");
+                        CurrentUserSession.CurrentUserId = Guid.Empty;
                         break;
                     default:
                         Console.WriteLine("Invalid Choice");
                         break;
                 }
             }
-            while (choice != MenuOptions.Exit);
+            while (choice != MenuOptions.Logout);
         }
 
         private void MarkTaskAsComplete()
@@ -275,7 +380,7 @@ namespace ToDoApplication.View
             Console.WriteLine("3. Edit To-Do Daily tasks");
             Console.WriteLine("4. Mark To-Do Daily tasks as Complete");
             Console.WriteLine("5. View All To-Do Daily Tasks");
-            Console.WriteLine("6. Exit");
+            Console.WriteLine("6. Logout");
             Console.WriteLine("Enter your choice (1-7): ");
         }
     }
