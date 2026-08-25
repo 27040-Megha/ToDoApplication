@@ -19,9 +19,15 @@ namespace ToDoApplication
 
                 var taskService = new TaskService(taskRepo);
 
-                var consoleOperator = new ConsoleOperations(taskService);
+                var userRepo = new UserRepo();
 
-                consoleOperator.Run();
+                var userService = new UserService(userRepo);
+
+                var authService = new AuthenticationService(userService);
+
+                var consoleOperator = new ConsoleOperations(taskService, userService, authService);
+
+                consoleOperator.Start();
             }
             catch (Exception ex)
             {

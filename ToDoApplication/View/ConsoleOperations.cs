@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 using ToDoApplication.Helper;
 using ToDoApplication.Model;
 using ToDoApplication.Model.Enums;
@@ -11,13 +14,139 @@ namespace ToDoApplication.View
     {
         private readonly TaskService _taskService;
 
-        public ConsoleOperations(TaskService taskService)
+        private readonly UserService _userService;
+
+        private readonly AuthenticationService _authService;
+
+        public ConsoleOperations(TaskService taskService, UserService userService, AuthenticationService authService)
         {
             this._taskService = taskService;
+            this._userService = userService;
+            this._authService = authService;
         }
 
-        public void Run()
+        public void Start()
         {
+            int choice;
+            do
+            {
+                Console.WriteLine("Welcome to the Application!");
+                Console.WriteLine("1. Signup");
+                Console.WriteLine("2. Login");
+                Console.WriteLine("3. Exit");
+                bool isValidChoice = int.TryParse(Console.ReadLine(), out choice);
+                if (!isValidChoice)
+                {
+                    choice = 0;
+                }
+
+                switch(choice)
+                {
+                    case 1:
+                        this.SignupUser();
+                        break;
+                    case 2:
+                        this.LoginUser();
+                        break;
+                    case 3:
+                        Console.WriteLine("Exiting the App Bye!");
+                        break;
+                }
+            }
+            while (choice != 3);
+        }
+
+        private void SignupUser()
+        {
+            Console.WriteLine("Enter Employee ID: ");
+            string empID = Console.ReadLine();
+            if (!InputValidation.ValidateEmployeeNumber(empID))
+            {
+                Console.WriteLine("Employee Number should be of the format EMP001");
+                return;
+            }
+
+            Console.WriteLine("Enter User Name: ");
+            string userName = Console.ReadLine();
+            if (!InputValidation.ValidateString(userName))
+            {
+                Console.WriteLine("String should not be null or empty");
+                return;
+            }
+
+            Console.WriteLine("Enter Password: ");
+            string password = Console.ReadLine();
+            if (!InputValidation.ValidatePassword(password))
+            {
+                Console.WriteLine("Password should be of length 8 exactly");
+                return;
+            }
+
+            bool isSuccess = this._userService.Adduser(new User(Guid.NewGuid(), empID, userName, password));
+
+            //if (!this._userService.Adduser(new User(Guid.NewGuid(), empID, userName, password)))
+            //{
+            //    Console.WriteLine("User with same Employee ID already exists!");
+            //    return;
+            //}
+            Console.WriteLine("Signup successful!");
+        }
+
+
+        private void LoginUser()
+        {
+            Console.WriteLine("Enter Employee ID: ");
+            string empID = Console.ReadLine();
+            if (!InputValidation.ValidateEmployeeNumber(empID))
+            {
+                Console.WriteLine("Employee Number should be of the format EMP001");
+                return;
+            }
+
+            Console.WriteLine("Enter Password: ");
+            string password = Console.ReadLine();
+            if (!InputValidation.ValidatePassword(password))
+            {
+                Console.WriteLine("Password should be of length 8 exactly");
+                return;
+            }
+
+            var loginResult = this._authService.Login(empID, password);
+            if (loginResult.IsSuccess)
+            {
+                this.Run();
+            }
+            else
+            {
+                Console.WriteLine(loginResult.Message);
+            }
+        }
+
+        private void Run()
+        {
+            Console.Clear();
+            var recentTasks = this._taskService.FetchRecentTwoTasks();
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine("Recent two tasks: ");
+            if (recentTasks.Count == 0)
+            {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("No DailyTask for you to complete");
+            }
+            else
+            {
+                foreach (var task in recentTasks)
+                {
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine($"Task Heading: {task.TaskHeading}");
+                    Console.WriteLine("Task Description: " + task.Description);
+                    Console.WriteLine("Target Date: " + task.TargetDate);
+                    Console.WriteLine("Task Recurrance: " + task.TaskRecurranceType);
+                    Console.WriteLine("----------------------------------------------------------------------------------------");
+                }
+            }
+            Console.ResetColor();
+
             MenuOptions choice;
             do
             {
@@ -40,21 +169,44 @@ namespace ToDoApplication.View
                     case MenuOptions.EditTask:
                         this.EditTask();
                         break;
+                    case MenuOptions.MarkTaskAsComplete:
+                        this.MarkTaskAsComplete();
+                        break;
                     case MenuOptions.ViewToDo:
                         this.ViewToDoTasks();
                         break;
-                    case MenuOptions.ViewSpecificTask:
-                        this.ViewSpecificTask();
-                        break;
-                    case MenuOptions.Exit:
-                        Console.WriteLine("Exiting Application..Bye!");
+                    case MenuOptions.Logout:
+                        Console.WriteLine("Logging Out from the Application..Bye!");
+                        CurrentUserSession.CurrentUserId = Guid.Empty;
                         break;
                     default:
                         Console.WriteLine("Invalid Choice");
                         break;
                 }
             }
-            while (choice != MenuOptions.Exit);
+            while (choice != MenuOptions.Logout);
+        }
+
+        private void MarkTaskAsComplete()
+        {
+            if (this._taskService.FetchaAllToDoTasks().Count == 0)
+            {
+                Console.WriteLine("No Daily Tasks to mark as complete right now!");
+            }
+
+            Console.WriteLine("Enter an index to update a daily task: ");
+            int index = this.GetValidIndex();
+            if (index == -1)
+            {
+                return;
+            }
+
+            if (!this._taskService.MarkAsComplete(index))
+            {
+                Console.WriteLine("Index out of range");
+            }
+
+            Console.WriteLine("Marked as Done Successfully!");
         }
 
         private void AddTask()
@@ -141,31 +293,83 @@ namespace ToDoApplication.View
 
         private void DeleteTask()
         {
-            throw new NotImplementedException();
+            if (this._taskService.FetchaAllToDoTasks().Count == 0)
+            {
+                Console.WriteLine("No Daily Tasks to delete right now!");
+            }
+
+            Console.WriteLine("Enter an index to delete a daily task: ");
+            int index = this.GetValidIndex();
+            if (index == -1)
+            {
+                return;
+            }
+
+            if (!this._taskService.DeleteDailyTask(index))
+            {
+                Console.WriteLine("No Daily Tasks found with that index, Index out of range!");
+                return;
+            }
+
+            Console.WriteLine("Daily Tasks Deleted Successfully!");
         }
+
+        private int GetValidIndex()
+        {
+            var isValidIndex = int.TryParse(Console.ReadLine(), out int index);
+            if (!isValidIndex || index < 1)
+            {
+                Console.WriteLine("Enter valid index greater than 1");
+                return -1;
+            }
+
+            return index - 1;
+        }
+
 
         private void EditTask()
         {
-            throw new NotImplementedException();
+            if (this._taskService.FetchaAllToDoTasks().Count == 0)
+            {
+                Console.WriteLine("No Daily Tasks to update right now!");
+            }
+
+            Console.WriteLine("Enter an index to update a daily task: ");
+            int index = this.GetValidIndex();
+            if (index == -1)
+            {
+                return;
+            }
+
+            var taskToUpdate = this.GetTaskDetails();
+            if (taskToUpdate is null)
+            {
+                return;
+            }
+
+            if (!this._taskService.UpdateDailyTask(index, taskToUpdate))
+            {
+                Console.WriteLine("No Daily Tasks found with that index, Index out of range!");
+                return;
+            }
+
+            Console.WriteLine("Daily Tasks Updated Successfully!");
         }
 
         private void ViewToDoTasks()
         {
             var toDoTasks = this._taskService.FetchaAllToDoTasks();
             Console.WriteLine("Your To-Do tasks: ");
+            int index = 1;
             foreach(var task in toDoTasks)
             {
-                Console.WriteLine("Task Heading: " + task.TaskHeading);
+                Console.WriteLine($"{index++}. Task Heading: {task.TaskHeading}");
                 Console.WriteLine("Task Description: " + task.Description);
                 Console.WriteLine("Target Date: " + task.TargetDate);
                 Console.WriteLine("Task Recurrance: " + task.TaskRecurranceType);
                 Console.WriteLine("Completed Task: " + task.IsCompleted);
+                Console.WriteLine("----------------------------------------------------------------------------------------");
             }
-        }
-
-        private void ViewSpecificTask()
-        {
-            throw new NotImplementedException();
         }
 
         private void DisplayMenu()
@@ -175,9 +379,8 @@ namespace ToDoApplication.View
             Console.WriteLine("2. Delete To-Do Daily tasks");
             Console.WriteLine("3. Edit To-Do Daily tasks");
             Console.WriteLine("4. Mark To-Do Daily tasks as Complete");
-            Console.WriteLine("5. View To-Do Daily Tasks");
-            Console.WriteLine("6. View Specific Daily Tasks");
-            Console.WriteLine("7. Exit");
+            Console.WriteLine("5. View All To-Do Daily Tasks");
+            Console.WriteLine("6. Logout");
             Console.WriteLine("Enter your choice (1-7): ");
         }
     }

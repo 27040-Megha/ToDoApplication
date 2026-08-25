@@ -68,5 +68,14 @@ namespace ToDoApplication.Repository {
                 return ResourceManager.GetString("TaskFile", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to user.json.
+        /// </summary>
+        internal static string UserFile {
+            get {
+                return ResourceManager.GetString("UserFile", resourceCulture);
+            }
+        }
     }
 }

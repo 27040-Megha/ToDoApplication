@@ -120,4 +120,7 @@
   <data name="TaskFile" xml:space="preserve">
     <value>task.json</value>
   </data>
+  <data name="UserFile" xml:space="preserve">
+    <value>user.json</value>
+  </data>
 </root>
