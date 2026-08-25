@@ -7,6 +7,9 @@ using ToDoApplication.Model;
 
 namespace ToDoApplication.Repository
 {
+    /// <summary>
+    /// Storage and CRUD Operations for user repo
+    /// </summary>
     public class UserRepo
     {
         public void Createuser(User user)

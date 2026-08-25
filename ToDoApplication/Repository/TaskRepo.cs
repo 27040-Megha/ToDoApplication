@@ -5,9 +5,13 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using ToDoApplication.Model;
+using ToDoApplication.Service;
 
 namespace ToDoApplication.Repository
 {
+    /// <summary>
+    /// Storage and CRUD Operations for task repo
+    /// </summary>
     public class TaskRepo
     {
         public void AddToDoTasks(List<Tasks> toDoTasks)
@@ -23,19 +27,19 @@ namespace ToDoApplication.Repository
         public List<Tasks> ReturnAllToDoTasks()
         {
             var listOfTasks = FileRepoService.ReadFile<Tasks>(FilePath.TaskFile);
-            return listOfTasks;
+            return listOfTasks.Where(task => task.UserId == CurrentUserSession.CurrentUserId).ToList();
         }
 
         public void RemoveDailyTask(int index)
         {
-            var listOfTasks = FileRepoService.ReadFile<Tasks>(FilePath.TaskFile);
+            var listOfTasks = FileRepoService.ReadFile<Tasks>(FilePath.TaskFile).Where(task => task.UserId == CurrentUserSession.CurrentUserId).ToList();
             listOfTasks.RemoveAt(index);
             FileRepoService.WriteFile(listOfTasks, FilePath.TaskFile);
         }
 
         public void ModifyDailyTask(int index, List<Tasks> tasksToUpdate)
         {
-            var listOfTasks = FileRepoService.ReadFile<Tasks>(FilePath.TaskFile);
+            var listOfTasks = FileRepoService.ReadFile<Tasks>(FilePath.TaskFile).Where(task => task.UserId == CurrentUserSession.CurrentUserId).ToList();
             var oldTask = listOfTasks[index];
             var newTask = tasksToUpdate[0];
             oldTask.TaskHeading = newTask.TaskHeading;
@@ -51,7 +55,7 @@ namespace ToDoApplication.Repository
 
         public void MarkAsComplete(int index)
         {
-            var listOfTasks = FileRepoService.ReadFile<Tasks>(FilePath.TaskFile);
+            var listOfTasks = FileRepoService.ReadFile<Tasks>(FilePath.TaskFile).Where(task => task.UserId == CurrentUserSession.CurrentUserId).ToList();
             listOfTasks[index].IsCompleted = true;
             FileRepoService.WriteFile(listOfTasks, FilePath.TaskFile);
         }
