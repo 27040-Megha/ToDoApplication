@@ -220,7 +220,7 @@ namespace ToDoApplication.View
             {
                 Console.WriteLine($"Target Date: {tasks.TargetDate}");
                 Console.WriteLine($"Task Heading: {tasks.TaskHeading} | Task Description : {tasks.Description} | Task Recurrence : {tasks.TaskRecurranceType}");
-                Console.WriteLine("-----------------------------------------------------------------------------------------------------------------------------------");
+                Console.WriteLine("-------------------------------------------------------------------------");
             }
         }
 
