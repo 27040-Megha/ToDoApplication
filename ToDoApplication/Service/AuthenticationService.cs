@@ -7,6 +7,9 @@ using ToDoApplication.Model;
 
 namespace ToDoApplication.Service
 {
+    /// <summary>
+    /// Contains Login method
+    /// </summary>
     public class AuthenticationService
     {
         private readonly UserService _userService;

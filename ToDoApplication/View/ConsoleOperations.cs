@@ -10,6 +10,9 @@ using ToDoApplication.Service;
 
 namespace ToDoApplication.View
 {
+    /// <summary>
+    /// Console Operations - Interacts with Service
+    /// </summary>
     public class ConsoleOperations
     {
         private readonly TaskService _taskService;
@@ -82,13 +85,11 @@ namespace ToDoApplication.View
                 return;
             }
 
-            bool isSuccess = this._userService.Adduser(new User(Guid.NewGuid(), empID, userName, password));
-
-            //if (!this._userService.Adduser(new User(Guid.NewGuid(), empID, userName, password)))
-            //{
-            //    Console.WriteLine("User with same Employee ID already exists!");
-            //    return;
-            //}
+            if (!this._userService.Adduser(new User(Guid.NewGuid(), empID, userName, password)))
+            {
+                Console.WriteLine("User with same Employee ID already exists!");
+                return;
+            }
             Console.WriteLine("Signup successful!");
         }
 
@@ -264,27 +265,25 @@ namespace ToDoApplication.View
 
             var toDoList = new List<Tasks>();
 
-            toDoList.Add(new Tasks(taskHeading, taskDescription, DateTime.Now, false, taskRecurranceType, Guid.Empty));
-
             if (taskRecurranceType == TaskRecurrance.Daily)
             {
                 for (var date = DateTime.Now.Date; date <= targetDate.Date; date = date.AddDays(1))
                 {
-                        toDoList.Add(new Tasks(taskHeading, taskDescription, date, false, taskRecurranceType, Guid.Empty));
+                        toDoList.Add(new Tasks(taskHeading, taskDescription, date, false, taskRecurranceType, CurrentUserSession.CurrentUserId));
                 }
             }
             else if (taskRecurranceType == TaskRecurrance.Monthly)
             {
                 for (var date = DateTime.Now.Date; date <= targetDate.Date; date = date.AddDays(30))
                 {
-                    toDoList.Add(new Tasks(taskHeading, taskDescription, date, false, taskRecurranceType, Guid.Empty));
+                    toDoList.Add(new Tasks(taskHeading, taskDescription, date, false, taskRecurranceType, CurrentUserSession.CurrentUserId));
                 }
             }
             else if (taskRecurranceType == TaskRecurrance.Weekly)
             {
                 for (var date = DateTime.Now.Date; date <= targetDate.Date; date = date.AddDays(7))
                 {
-                    toDoList.Add(new Tasks(taskHeading, taskDescription, date, false, taskRecurranceType, Guid.Empty));
+                    toDoList.Add(new Tasks(taskHeading, taskDescription, date, false, taskRecurranceType, CurrentUserSession.CurrentUserId));
                 }
             }
 

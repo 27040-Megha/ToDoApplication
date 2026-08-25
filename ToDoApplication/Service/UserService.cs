@@ -8,6 +8,9 @@ using ToDoApplication.Repository;
 
 namespace ToDoApplication.Service
 {
+    /// <summary>
+    /// Contains Business Logic for User Service
+    /// </summary>
     public class UserService
     {
         private readonly UserRepo _userRepo;
@@ -19,11 +22,11 @@ namespace ToDoApplication.Service
 
         public bool Adduser(User user)
         {
-            //var listOfUsers = this._userRepo.FetchAllUsers().Where(employee => employee.EmployeeId == user.EmployeeId).ToList();
-            //if (listOfUsers.Count > 0)
-            //{
-            //    return false;
-            //}
+            var listOfUsers = this._userRepo.FetchAllUsers().Where(employee => employee.EmployeeId == user.EmployeeId).ToList();
+            if (listOfUsers.Count > 0)
+            {
+                return false;
+            }
 
             this._userRepo.Createuser(user);
             return true;

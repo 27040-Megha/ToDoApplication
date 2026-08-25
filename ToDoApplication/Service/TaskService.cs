@@ -8,6 +8,9 @@ using ToDoApplication.Repository;
 
 namespace ToDoApplication.Service
 {
+    /// <summary>
+    /// Contains Business Logic for Task Service
+    /// </summary>
     public class TaskService
     {
         private readonly TaskRepo _taskRepo;
