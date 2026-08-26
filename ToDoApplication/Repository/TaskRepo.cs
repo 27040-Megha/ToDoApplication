@@ -44,8 +44,10 @@ namespace ToDoApplication.Repository
         /// <param name="index"></param>
         public void RemoveDailyTask(int index)
         {
-            var listOfTasks = FileRepoService.ReadFile<Tasks>(FilePath.TaskFile).Where(task => task.UserId == CurrentUserSession.CurrentUserId).ToList();
-            listOfTasks.RemoveAt(index);
+            var listOfTasks = FileRepoService.ReadFile<Tasks>(FilePath.TaskFile);
+            var listOfCurrentUserTasks = listOfTasks.Where(t => t.UserId == CurrentUserSession.CurrentUserId).ToList();
+            var task = listOfCurrentUserTasks[index];
+            listOfTasks.Remove(task);
             FileRepoService.WriteFile(listOfTasks, FilePath.TaskFile);
         }
 
@@ -56,8 +58,9 @@ namespace ToDoApplication.Repository
         /// <param name="tasksToUpdate"></param>
         public void ModifyDailyTask(int index, List<Tasks> tasksToUpdate)
         {
-            var listOfTasks = FileRepoService.ReadFile<Tasks>(FilePath.TaskFile).Where(task => task.UserId == CurrentUserSession.CurrentUserId).ToList();
-            var oldTask = listOfTasks[index];
+            var listOfTasks = FileRepoService.ReadFile<Tasks>(FilePath.TaskFile);
+            var listOfCurrentUserTasks = listOfTasks.Where(t => t.UserId == CurrentUserSession.CurrentUserId).ToList();
+            var oldTask = listOfCurrentUserTasks[index];
             var newTask = tasksToUpdate[0];
             oldTask.TaskHeading = newTask.TaskHeading;
             oldTask.Description = newTask.Description;
@@ -76,8 +79,10 @@ namespace ToDoApplication.Repository
         /// <param name="index"></param>
         public void MarkAsComplete(int index)
         {
-            var listOfTasks = FileRepoService.ReadFile<Tasks>(FilePath.TaskFile).Where(task => task.UserId == CurrentUserSession.CurrentUserId).ToList();
-            listOfTasks[index].IsCompleted = true;
+            var listOfTasks = FileRepoService.ReadFile<Tasks>(FilePath.TaskFile);
+            var listOfCurrentUserTasks = listOfTasks.Where(t => t.UserId == CurrentUserSession.CurrentUserId).ToList();
+            var task = listOfCurrentUserTasks[index];
+            task.IsCompleted = true;
             FileRepoService.WriteFile(listOfTasks, FilePath.TaskFile);
         }
     }
