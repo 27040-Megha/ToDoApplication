@@ -85,7 +85,7 @@ namespace ToDoApplication.Service
             }
 
             var allTasks = this.FetchaAllToDoTasks();
-            this._taskRepo.MarkAsComplete(allTasks[index].TaskId);
+            this._taskRepo.MarkAsCompleted(allTasks[index].TaskId);
             this.CheckAndAddRecurrentTask(allTasks[index]);
             return true;
         }

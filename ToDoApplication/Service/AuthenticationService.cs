@@ -32,7 +32,7 @@ namespace ToDoApplication.Service
 
             if (!string.Equals(user.Password, password))
             {
-                return new Result(false, "Password doesn't match");
+                return new Result(false, "Invalid Credentials, Password doesn't match");
             }
 
             CurrentUserSession.CurrentUserId = user.UserId;

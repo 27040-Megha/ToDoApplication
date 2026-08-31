@@ -64,7 +64,7 @@ namespace ToDoApplication.Repository
         /// Mark the task as complete in repo
         /// </summary>
         /// <param name="taskId"></param>
-        public void MarkAsComplete(Guid taskId)
+        public void MarkAsCompleted(Guid taskId)
         {
             var listOfTasks = FileRepoService.ReadFile<Tasks>(FilePath.TaskFile);
             var task = listOfTasks.FirstOrDefault(t => t.TaskId == taskId);

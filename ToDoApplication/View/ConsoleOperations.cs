@@ -67,27 +67,21 @@ namespace ToDoApplication.View
 
         private void SignupUser()
         {
-            Console.WriteLine("Enter Employee ID: ");
-            string empID = Console.ReadLine();
-            if (!InputValidation.ValidateEmployeeNumber(empID))
+            string empID = this.GetEmployeeId();
+            if (empID == null)
             {
-                Console.WriteLine("Employee Number should be of the format EMP001");
                 return;
             }
 
-            Console.WriteLine("Enter User Name: ");
-            string userName = Console.ReadLine();
-            if (!InputValidation.ValidateString(userName))
+            string userName = this.GetUserName();
+            if (userName == null)
             {
-                Console.WriteLine("String should not be null or empty");
                 return;
             }
 
-            Console.WriteLine("Enter Password: ");
-            string password = Console.ReadLine();
-            if (!InputValidation.ValidatePassword(password))
+            string password = this.GetPassword();
+            if (password == null)
             {
-                Console.WriteLine("Password should be of length 8 exactly");
                 return;
             }
 
@@ -99,22 +93,55 @@ namespace ToDoApplication.View
             Console.WriteLine("Signup successful!");
         }
 
-
-        private void LoginUser()
+        private string GetEmployeeId()
         {
             Console.WriteLine("Enter Employee ID: ");
             string empID = Console.ReadLine();
             if (!InputValidation.ValidateEmployeeNumber(empID))
             {
                 Console.WriteLine("Employee Number should be of the format EMP001");
-                return;
+                return null;
             }
 
+            return empID;
+        }
+
+        private string GetUserName()
+        {
+            Console.WriteLine("Enter User Name: ");
+            string userName = Console.ReadLine();
+            if (!InputValidation.ValidateString(userName))
+            {
+                Console.WriteLine("String should not be null or empty");
+                return null;
+            }
+
+            return userName;
+        }
+
+        private string GetPassword()
+        {
             Console.WriteLine("Enter Password: ");
             string password = Console.ReadLine();
             if (!InputValidation.ValidatePassword(password))
             {
                 Console.WriteLine("Password should be of length 8 exactly");
+                return null;
+            }
+            return password;
+        }
+
+        private void LoginUser()
+        {
+            string empID = this.GetEmployeeId();
+            if (empID == null)
+            {
+                return;
+            }
+
+            string password = this.GetPassword();
+            if (password == null)
+            {
                 return;
             }
 
@@ -228,6 +255,7 @@ namespace ToDoApplication.View
                 Console.WriteLine("No Daily Tasks to mark as complete right now!");
             }
 
+            this.ViewToDoTasks();
             Console.WriteLine("Enter an index to mark a daily task as complete: ");
             int index = this.GetValidIndex();
             if (index == -1)
@@ -352,6 +380,7 @@ namespace ToDoApplication.View
                 Console.WriteLine("No Daily Tasks to delete right now!");
             }
 
+            this.ViewToDoTasks();
             Console.WriteLine("Enter an index to delete a daily task: ");
             int index = this.GetValidIndex();
             if (index == -1)
@@ -388,6 +417,7 @@ namespace ToDoApplication.View
                 Console.WriteLine("No Daily Tasks to update right now!");
             }
 
+            this.ViewToDoTasks();
             Console.WriteLine("Enter an index to update a daily task: ");
             int index = this.GetValidIndex();
             if (index == -1)
