@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
 using ToDoApplication.Helper;
 using ToDoApplication.Model;
 using ToDoApplication.Model.Enums;
@@ -52,7 +49,7 @@ namespace ToDoApplication.View
                     choice = 0;
                 }
 
-                switch(choice)
+                switch (choice)
                 {
                     case 1:
                         this.SignupUser();
@@ -231,7 +228,7 @@ namespace ToDoApplication.View
                 Console.WriteLine("No Daily Tasks to mark as complete right now!");
             }
 
-            Console.WriteLine("Enter an index to update a daily task: ");
+            Console.WriteLine("Enter an index to mark a daily task as complete: ");
             int index = this.GetValidIndex();
             if (index == -1)
             {
@@ -241,6 +238,7 @@ namespace ToDoApplication.View
             if (!this._taskService.MarkAsComplete(index))
             {
                 Console.WriteLine("Index out of range");
+                return;
             }
 
             Console.WriteLine("Marked as Done Successfully!");
@@ -259,7 +257,7 @@ namespace ToDoApplication.View
             Console.WriteLine("Task Added Successfully!");
         }
 
-        private List<Tasks> GetTaskDetails()
+        private Tasks GetTaskDetails()
         {
             Console.WriteLine("Enter Task Heading: ");
             string taskHeading = Console.ReadLine();
@@ -291,40 +289,42 @@ namespace ToDoApplication.View
                 return null;
             }
 
-            Console.WriteLine("Enter Task Recurrance (1-Daily, 2-Weekly, 3-Monthly): ");
-            if (!int.TryParse(Console.ReadLine(), out int taskRecurrance) || !(taskRecurrance >= 1 && taskRecurrance <= 3))
+            Console.WriteLine("Enter Task Recurrance (1-Daily, 2-Weekly, 3-Monthly, 4-None): ");
+            if (!int.TryParse(Console.ReadLine(), out int taskRecurrance) || !(taskRecurrance >= 1 && taskRecurrance <= 4))
             {
-                Console.WriteLine("Enter valid Integer (1 0r 2 or 3)!");
+                Console.WriteLine("Enter valid Integer (1 or 2 or 3 or 4)!");
                 return null;
             }
 
             var taskRecurranceType = (TaskRecurrance)taskRecurrance;
+            return new Tasks(Guid.NewGuid(), taskHeading, taskDescription, targetDate, false, taskRecurranceType, CurrentUserSession.CurrentUserId);
 
-            var toDoList = new List<Tasks>();
+            //var toDoList = new List<Tasks>();
 
-            if (taskRecurranceType == TaskRecurrance.Daily)
-            {
-                for (var date = DateTime.Now.Date; date <= targetDate.Date; date = date.AddDays(1))
-                {
-                        toDoList.Add(new Tasks(taskHeading, taskDescription, date, false, taskRecurranceType, CurrentUserSession.CurrentUserId));
-                }
-            }
-            else if (taskRecurranceType == TaskRecurrance.Monthly)
-            {
-                for (var date = DateTime.Now.Date; date <= targetDate.Date; date = date.AddDays(30))
-                {
-                    toDoList.Add(new Tasks(taskHeading, taskDescription, date, false, taskRecurranceType, CurrentUserSession.CurrentUserId));
-                }
-            }
-            else if (taskRecurranceType == TaskRecurrance.Weekly)
-            {
-                for (var date = DateTime.Now.Date; date <= targetDate.Date; date = date.AddDays(7))
-                {
-                    toDoList.Add(new Tasks(taskHeading, taskDescription, date, false, taskRecurranceType, CurrentUserSession.CurrentUserId));
-                }
-            }
 
-            return toDoList;
+            //if (taskRecurranceType == TaskRecurrance.Daily)
+            //{
+            //    for (var date = DateTime.Now.Date; date <= targetDate.Date; date = date.AddDays(1))
+            //    {
+            //            toDoList.Add(new Tasks(recurringTaskId, taskHeading, taskDescription, date, false, taskRecurranceType, CurrentUserSession.CurrentUserId));
+            //    }
+            //}
+            //else if (taskRecurranceType == TaskRecurrance.Monthly)
+            //{
+            //    for (var date = DateTime.Now.Date; date <= targetDate.Date; date = date.AddDays(30))
+            //    {
+            //        toDoList.Add(new Tasks(recurringTaskId, taskHeading, taskDescription, date, false, taskRecurranceType, CurrentUserSession.CurrentUserId));
+            //    }
+            //}
+            //else if (taskRecurranceType == TaskRecurrance.Weekly)
+            //{
+            //    for (var date = DateTime.Now.Date; date <= targetDate.Date; date = date.AddDays(7))
+            //    {
+            //        toDoList.Add(new Tasks(recurringTaskId, taskHeading, taskDescription, date, false, taskRecurranceType, CurrentUserSession.CurrentUserId));
+            //    }
+            //}
+
+            //return toDoList;
         }
 
         private void DeleteTask()
@@ -397,7 +397,7 @@ namespace ToDoApplication.View
             var toDoTasks = this._taskService.FetchaAllToDoTasks();
             Console.WriteLine("Your To-Do tasks: ");
             int index = 1;
-            foreach(var task in toDoTasks)
+            foreach (var task in toDoTasks)
             {
                 Console.WriteLine($"{index++}. Task Heading: {task.TaskHeading}");
                 Console.WriteLine("Task Description: " + task.Description);

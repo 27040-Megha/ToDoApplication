@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ToDoApplication.Model.Enums;
 
 namespace ToDoApplication.Model
@@ -12,8 +8,9 @@ namespace ToDoApplication.Model
     /// </summary>
     public class Tasks
     {
-        public Tasks(string taskHeading, string description, DateTime targetDate, bool isCompleted, TaskRecurrance taskRecurranceType, Guid userId)
+        public Tasks(Guid taskId, string taskHeading, string description, DateTime targetDate, bool isCompleted, TaskRecurrance taskRecurranceType, Guid userId)
         {
+            this.TaskId = taskId;
             this.TaskHeading = taskHeading;
             this.Description = description;
             this.TargetDate = targetDate;
@@ -21,6 +18,8 @@ namespace ToDoApplication.Model
             this.TaskRecurranceType = taskRecurranceType;
             this.UserId = userId;
         }
+
+        public Guid TaskId { get; set; }
 
         public string TaskHeading { get; set; }
 
@@ -30,7 +29,7 @@ namespace ToDoApplication.Model
 
         public bool IsCompleted { get; set; }
 
-        public TaskRecurrance TaskRecurranceType{ get; set; }
+        public TaskRecurrance TaskRecurranceType { get; set; }
 
         public Guid UserId { get; set; }
     }

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ToDoApplication.Service
 {
@@ -14,6 +10,6 @@ namespace ToDoApplication.Service
         /// <summary>
         /// Current User ID
         /// </summary>
-        public static Guid CurrentUserId {get; set;}
+        public static Guid CurrentUserId { get; set; }
     }
 }

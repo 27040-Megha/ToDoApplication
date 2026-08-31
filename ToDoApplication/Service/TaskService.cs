@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ToDoApplication.Model;
+using ToDoApplication.Model.Enums;
 using ToDoApplication.Repository;
 
 namespace ToDoApplication.Service
@@ -24,7 +23,7 @@ namespace ToDoApplication.Service
         /// Save To Do Tasks to repo
         /// </summary>
         /// <param name="toDoTasks"></param>
-        public void SaveToDoTasks(List<Tasks> toDoTasks)
+        public void SaveToDoTasks(Tasks toDoTasks)
         {
             this._taskRepo.AddToDoTasks(toDoTasks);
         }
@@ -35,7 +34,7 @@ namespace ToDoApplication.Service
         /// <returns></returns>
         public List<Tasks> FetchaAllToDoTasks()
         {
-            return this._taskRepo.ReturnAllToDoTasks();
+            return this._taskRepo.ReturnAllToDoTasks().Where(task => task.UserId == CurrentUserSession.CurrentUserId).ToList();
         }
 
         /// <summary>
@@ -50,7 +49,8 @@ namespace ToDoApplication.Service
                 return false;
             }
 
-            this._taskRepo.RemoveDailyTask(index);
+            var tasks = this.FetchaAllToDoTasks();
+            this._taskRepo.RemoveDailyTask(tasks[index].TaskId);
             return true;
         }
 
@@ -60,15 +60,15 @@ namespace ToDoApplication.Service
         /// <param name="index"></param>
         /// <param name="tasksToUpdate"></param>
         /// <returns></returns>
-        public bool UpdateDailyTask(int index, List<Tasks> tasksToUpdate)
+        public bool UpdateDailyTask(int index, Tasks tasksToUpdate)
         {
             if (index >= this.FetchaAllToDoTasks().Count)
             {
                 return false;
             }
 
-
-            this._taskRepo.ModifyDailyTask(index, tasksToUpdate);
+            var oldTask = this.FetchaAllToDoTasks()[index];
+            this._taskRepo.ModifyDailyTask(oldTask.TaskId, tasksToUpdate);
             return true;
         }
 
@@ -84,9 +84,34 @@ namespace ToDoApplication.Service
                 return false;
             }
 
-            this._taskRepo.MarkAsComplete(index);
+            var allTasks = this.FetchaAllToDoTasks();
+            this._taskRepo.MarkAsComplete(allTasks[index].TaskId);
+            this.CheckAndAddRecurrentTask(allTasks[index]);
             return true;
         }
+
+        private void CheckAndAddRecurrentTask(Tasks completedTask)
+        {
+            var task = this.FetchaAllToDoTasks().FirstOrDefault(t => t.TaskId == completedTask.TaskId);
+            if (task.TaskRecurranceType == TaskRecurrance.None)
+            {
+                return;
+            }
+
+            switch (task.TaskRecurranceType)
+            {
+                case TaskRecurrance.Daily:
+                    this.SaveToDoTasks(new Tasks(Guid.NewGuid(), completedTask.TaskHeading, completedTask.Description, completedTask.TargetDate.Date.AddDays(1), completedTask.IsCompleted, completedTask.TaskRecurranceType, CurrentUserSession.CurrentUserId));
+                    break;
+                case TaskRecurrance.Monthly:
+                    this.SaveToDoTasks(new Tasks(Guid.NewGuid(), completedTask.TaskHeading, completedTask.Description, completedTask.TargetDate.Date.AddDays(30), completedTask.IsCompleted, completedTask.TaskRecurranceType, CurrentUserSession.CurrentUserId));
+                    break;
+                case TaskRecurrance.Weekly:
+                    this.SaveToDoTasks(new Tasks(Guid.NewGuid(), completedTask.TaskHeading, completedTask.Description, completedTask.TargetDate.Date.AddDays(7), completedTask.IsCompleted, completedTask.TaskRecurranceType, CurrentUserSession.CurrentUserId));
+                    break;
+            }
+        }
+
 
         /// <summary>
         /// Returns only recent two tasks that has not yet been marked as complete
@@ -101,7 +126,7 @@ namespace ToDoApplication.Service
 
         public List<Tasks> CalendarWiseSortedDailyTask()
         {
-            var listOfAllTasks = this.FetchaAllToDoTasks().OrderBy(tasks => tasks.TargetDate);
+            var listOfAllTasks = this.FetchaAllToDoTasks().OrderBy(tasks => tasks.TargetDate).Where(tasks => !tasks.IsCompleted);
             return listOfAllTasks.ToList();
         }
     }

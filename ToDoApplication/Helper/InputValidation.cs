@@ -31,7 +31,7 @@ namespace ToDoApplication.Helper
                 return false;
             }
 
-            if (!input.StartsWith("EMP",StringComparison.Ordinal))
+            if (!input.StartsWith("EMP", StringComparison.Ordinal))
             {
                 return false;
             }

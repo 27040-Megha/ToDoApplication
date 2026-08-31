@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 using ToDoApplication.Model;
 using ToDoApplication.Service;
 
@@ -18,16 +15,13 @@ namespace ToDoApplication.Repository
         /// Add tasks to repo
         /// </summary>
         /// <param name="toDoTasks"></param>
-        public void AddToDoTasks(List<Tasks> toDoTasks)
+        public void AddToDoTasks(Tasks toDoTasks)
         {
-            foreach (var tasks in toDoTasks)
-            {
-                var listOfTasks = FileRepoService.ReadFile<Tasks>(FilePath.TaskFile);
-                listOfTasks.Add(tasks);
-                FileRepoService.WriteFile(listOfTasks, FilePath.TaskFile);
-            }
+            var listOfTasks = FileRepoService.ReadFile<Tasks>(FilePath.TaskFile);
+            listOfTasks.Add(toDoTasks);
+            FileRepoService.WriteFile(listOfTasks, FilePath.TaskFile);
         }
-        
+
         /// <summary>
         /// Fetch and returns all tasks from Repo
         /// </summary>
@@ -35,18 +29,17 @@ namespace ToDoApplication.Repository
         public List<Tasks> ReturnAllToDoTasks()
         {
             var listOfTasks = FileRepoService.ReadFile<Tasks>(FilePath.TaskFile);
-            return listOfTasks.Where(task => task.UserId == CurrentUserSession.CurrentUserId).ToList();
+            return listOfTasks;
         }
 
         /// <summary>
         /// Removes a daily task from Repo
         /// </summary>
         /// <param name="index"></param>
-        public void RemoveDailyTask(int index)
+        public void RemoveDailyTask(Guid taskId)
         {
             var listOfTasks = FileRepoService.ReadFile<Tasks>(FilePath.TaskFile);
-            var listOfCurrentUserTasks = listOfTasks.Where(t => t.UserId == CurrentUserSession.CurrentUserId).ToList();
-            var task = listOfCurrentUserTasks[index];
+            var task = listOfTasks.FirstOrDefault(t => t.TaskId == taskId);
             listOfTasks.Remove(task);
             FileRepoService.WriteFile(listOfTasks, FilePath.TaskFile);
         }
@@ -54,34 +47,27 @@ namespace ToDoApplication.Repository
         /// <summary>
         /// Modify Daily Task in Repo
         /// </summary>
-        /// <param name="index"></param>
+        /// <param name="taskId"></param>
         /// <param name="tasksToUpdate"></param>
-        public void ModifyDailyTask(int index, List<Tasks> tasksToUpdate)
+        public void ModifyDailyTask(Guid taskId, Tasks newTask)
         {
             var listOfTasks = FileRepoService.ReadFile<Tasks>(FilePath.TaskFile);
-            var listOfCurrentUserTasks = listOfTasks.Where(t => t.UserId == CurrentUserSession.CurrentUserId).ToList();
-            var oldTask = listOfCurrentUserTasks[index];
-            var newTask = tasksToUpdate[0];
+            var oldTask = listOfTasks.FirstOrDefault(task => task.TaskId == taskId);
             oldTask.TaskHeading = newTask.TaskHeading;
             oldTask.Description = newTask.Description;
             oldTask.TargetDate = newTask.TargetDate;
             oldTask.TaskRecurranceType = newTask.TaskRecurranceType;
-            for (int i = 1; i < tasksToUpdate.Count; i++)
-            {
-                listOfTasks.Add(tasksToUpdate[i]);
-            }
             FileRepoService.WriteFile(listOfTasks, FilePath.TaskFile);
         }
 
         /// <summary>
         /// Mark the task as complete in repo
         /// </summary>
-        /// <param name="index"></param>
-        public void MarkAsComplete(int index)
+        /// <param name="taskId"></param>
+        public void MarkAsComplete(Guid taskId)
         {
             var listOfTasks = FileRepoService.ReadFile<Tasks>(FilePath.TaskFile);
-            var listOfCurrentUserTasks = listOfTasks.Where(t => t.UserId == CurrentUserSession.CurrentUserId).ToList();
-            var task = listOfCurrentUserTasks[index];
+            var task = listOfTasks.FirstOrDefault(t => t.TaskId == taskId);
             task.IsCompleted = true;
             FileRepoService.WriteFile(listOfTasks, FilePath.TaskFile);
         }
