@@ -67,6 +67,7 @@ namespace ToDoApplication.View
 
         private void SignupUser()
         {
+            Console.Clear();
             string empID = this.GetEmployeeId();
             if (empID == null)
             {
@@ -157,6 +158,7 @@ namespace ToDoApplication.View
 
         private void LoginUser()
         {
+            Console.Clear();
             string empID = this.GetEmployeeId();
             if (empID == null)
             {
@@ -261,6 +263,7 @@ namespace ToDoApplication.View
 
         private void ViewCalendar()
         {
+            Console.Clear();
             var calendarwiseSortedDailyTask = this._taskService.CalendarWiseSortedDailyTask();
             Console.WriteLine("CALENDAR WISE SORTED DAILY TASKS");
             foreach (var tasks in calendarwiseSortedDailyTask)
@@ -297,7 +300,8 @@ namespace ToDoApplication.View
 
         private void AddTask()
         {
-
+            Console.Clear();
+            Console.WriteLine("Enter new To-Do task:");
             var toDoTasks = this.GetTaskDetails();
             if (toDoTasks is null)
             {
@@ -403,6 +407,7 @@ namespace ToDoApplication.View
                 Console.WriteLine("No Daily Tasks to delete right now!");
             }
 
+            Console.Clear();
             this.ViewToDoTasks();
             Console.WriteLine("Enter an index to delete a daily task: ");
             int index = this.GetValidIndex();
@@ -440,6 +445,7 @@ namespace ToDoApplication.View
                 Console.WriteLine("No Daily Tasks to update right now!");
             }
 
+            Console.Clear();
             this.ViewToDoTasks();
             Console.WriteLine("Enter an index to update a daily task: ");
             int index = this.GetValidIndex();
