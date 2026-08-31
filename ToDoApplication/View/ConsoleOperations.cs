@@ -122,7 +122,20 @@ namespace ToDoApplication.View
         private string GetPassword()
         {
             Console.WriteLine("Enter Password: ");
-            string password = Console.ReadLine();
+            string password = "";
+            while (true)
+            {
+                var key = Console.ReadKey(true);
+                if (key.Key == ConsoleKey.Enter)
+                {
+                    break;
+                }
+
+                password += key.KeyChar;
+                Console.Write("*");
+            }
+
+            Console.WriteLine();
             if (!InputValidation.ValidatePassword(password))
             {
                 Console.WriteLine("Password should be of length 8 exactly");
