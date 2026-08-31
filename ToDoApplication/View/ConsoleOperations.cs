@@ -369,7 +369,7 @@ namespace ToDoApplication.View
 
         private DateTime? GetDateTime()
         {
-            Console.WriteLine("Enter Final Target Date: ");
+            Console.WriteLine("Enter Final Target Date (dd-mm-yyyy): ");
             bool isValidDate = DateTime.TryParse(Console.ReadLine(), out DateTime targetDate);
             if (!isValidDate)
             {
