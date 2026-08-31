@@ -121,27 +121,38 @@ namespace ToDoApplication.View
 
         private string GetPassword()
         {
+            int maxAttempts = 3;
             Console.WriteLine("Enter Password: ");
-            string password = "";
-            while (true)
+            for (int attempt = 1; attempt <= maxAttempts; attempt++)
             {
-                var key = Console.ReadKey(true);
-                if (key.Key == ConsoleKey.Enter)
+                string password = "";
+                while (true)
                 {
-                    break;
+                    var key = Console.ReadKey(true);
+                    if (key.Key == ConsoleKey.Enter)
+                    {
+                        break;
+                    }
+
+                    password += key.KeyChar;
+                    Console.Write("*");
                 }
 
-                password += key.KeyChar;
-                Console.Write("*");
-            }
+                Console.WriteLine();
+                if (InputValidation.ValidatePassword(password))
+                {
+                    return password;
+                }
 
-            Console.WriteLine();
-            if (!InputValidation.ValidatePassword(password))
-            {
-                Console.WriteLine("Password should be of length 8 exactly");
-                return null;
+                Console.WriteLine("Password must contain 8 characters exactly!");
+
+                if (attempt < maxAttempts)
+                {
+                    Console.WriteLine("Re-enter Password: ");
+                }
             }
-            return password;
+            Console.WriteLine("Too many failed attempts!");
+            return null;
         }
 
         private void LoginUser()
@@ -150,8 +161,7 @@ namespace ToDoApplication.View
             if (empID == null)
             {
                 return;
-            }
-
+            }  
             string password = this.GetPassword();
             if (password == null)
             {
