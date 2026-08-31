@@ -12,5 +12,7 @@
         Monthly,
 
         None = 4,
+
+        Invalid,    
     }
 }

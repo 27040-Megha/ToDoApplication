@@ -24,6 +24,16 @@ namespace ToDoApplication.Helper
             return true;
         }
 
+        public static bool ValidateParagraph(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return false;
+            }
+
+            return input.All(c => char.IsLetter(c) || char.IsWhiteSpace(c));
+        }
+
         public static bool ValidateEmployeeNumber(string input)
         {
             if (string.IsNullOrEmpty(input) || input.Length != 6)

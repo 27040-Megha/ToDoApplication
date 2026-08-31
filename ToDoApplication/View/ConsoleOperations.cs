@@ -259,6 +259,35 @@ namespace ToDoApplication.View
 
         private Tasks GetTaskDetails()
         {
+            string taskHeading = this.GetTaskHeading();
+            if (taskHeading == null)
+            {
+                return null;
+            }
+
+            string taskDescription = this.GetTaskDescription();
+            if (taskDescription == null)
+            {
+                return null;
+            }
+
+            DateTime? targetDate = this.GetDateTime();
+            if (targetDate == null)
+            {
+                return null;
+            }
+
+            TaskRecurrance taskRecurranceType = this.GetTaskRecurrance();
+            if (taskRecurranceType == TaskRecurrance.Invalid)
+            {
+                return null;
+            }
+
+            return new Tasks(Guid.NewGuid(), taskHeading, taskDescription, (DateTime)targetDate, false, taskRecurranceType, CurrentUserSession.CurrentUserId);
+        }
+
+        private string GetTaskHeading()
+        {
             Console.WriteLine("Enter Task Heading: ");
             string taskHeading = Console.ReadLine();
             if (!InputValidation.ValidateString(taskHeading))
@@ -267,19 +296,29 @@ namespace ToDoApplication.View
                 return null;
             }
 
+            return taskHeading;
+        }
+
+        private string GetTaskDescription()
+        {
             Console.WriteLine("Enter Task Description:");
             string taskDescription = Console.ReadLine();
-            if (!InputValidation.ValidateString(taskDescription))
+            if (!InputValidation.ValidateParagraph(taskDescription))
             {
-                Console.WriteLine("Task Description should not be null or empty");
+                Console.WriteLine("Task Description should not be null or empty and should not contain any special characters or digits!");
                 return null;
             }
 
+            return taskDescription;
+        }
+
+        private DateTime? GetDateTime()
+        {
             Console.WriteLine("Enter Final Target Date: ");
             bool isValidDate = DateTime.TryParse(Console.ReadLine(), out DateTime targetDate);
             if (!isValidDate)
             {
-                Console.WriteLine("Invalid Date format");
+                Console.WriteLine("Invalid Date format, should be in dd-mm-yyyy format!");
                 return null;
             }
 
@@ -289,42 +328,21 @@ namespace ToDoApplication.View
                 return null;
             }
 
+            return targetDate;
+        }
+
+        private TaskRecurrance GetTaskRecurrance()
+        {
+
             Console.WriteLine("Enter Task Recurrance (1-Daily, 2-Weekly, 3-Monthly, 4-None): ");
             if (!int.TryParse(Console.ReadLine(), out int taskRecurrance) || !(taskRecurrance >= 1 && taskRecurrance <= 4))
             {
                 Console.WriteLine("Enter valid Integer (1 or 2 or 3 or 4)!");
-                return null;
+                return TaskRecurrance.Invalid;
             }
 
             var taskRecurranceType = (TaskRecurrance)taskRecurrance;
-            return new Tasks(Guid.NewGuid(), taskHeading, taskDescription, targetDate, false, taskRecurranceType, CurrentUserSession.CurrentUserId);
-
-            //var toDoList = new List<Tasks>();
-
-
-            //if (taskRecurranceType == TaskRecurrance.Daily)
-            //{
-            //    for (var date = DateTime.Now.Date; date <= targetDate.Date; date = date.AddDays(1))
-            //    {
-            //            toDoList.Add(new Tasks(recurringTaskId, taskHeading, taskDescription, date, false, taskRecurranceType, CurrentUserSession.CurrentUserId));
-            //    }
-            //}
-            //else if (taskRecurranceType == TaskRecurrance.Monthly)
-            //{
-            //    for (var date = DateTime.Now.Date; date <= targetDate.Date; date = date.AddDays(30))
-            //    {
-            //        toDoList.Add(new Tasks(recurringTaskId, taskHeading, taskDescription, date, false, taskRecurranceType, CurrentUserSession.CurrentUserId));
-            //    }
-            //}
-            //else if (taskRecurranceType == TaskRecurrance.Weekly)
-            //{
-            //    for (var date = DateTime.Now.Date; date <= targetDate.Date; date = date.AddDays(7))
-            //    {
-            //        toDoList.Add(new Tasks(recurringTaskId, taskHeading, taskDescription, date, false, taskRecurranceType, CurrentUserSession.CurrentUserId));
-            //    }
-            //}
-
-            //return toDoList;
+            return taskRecurranceType;
         }
 
         private void DeleteTask()
